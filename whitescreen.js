@@ -1,6 +1,6 @@
 class WhiteScreen extends Scene {
     constructor() {
-        super("WhiteScreen");
+        super('WhiteScreen');
     }
 
     display() {

@@ -1,68 +1,70 @@
-class Audio {
+let player;
+let mic;
+let analyzer;
+let fft;
+
+let mode = 'a';
+
+class AudioExample extends Scene {
     constructor() {
+        super('AudioExample')
+        
+        this.fft = new p5.FFT(0.8, 1024);
+        this.analyzer = new p5.Amplitude();
+        
+        this.smoothedBands = new Array(1024).fill(0);
+        
+        if (mode == 'mic') {
+            this.mic = new p5.AudioIn();
+            this.mic.start(() => {
+                this.fft.setInput(this.mic);
+                this.analyzer.setInput(this.mic);
+            });
+        } else {
+            this.player = new p5.SoundFile("Whiplash.mp3", () => {
+                this.player.play();
+                this.fft.setInput(this.player);
+                this.analyzer.setInput(this.player);
+            });
+        }
     }
 
     display() {
+        background(0);
+        
+        const amp = this.analyzer.getLevel();
+        const spectrum = this.fft.analyze();
+
+        this.drawAudioWave(spectrum);
+        
+        this.drawCircle(amp);
+    }
+
+    drawAudioWave(spectrum) {
+        stroke(255);
+        strokeWeight(windowWidth * 0.00208);
+        
+        let nBands = spectrum.length / 5;
+        let bandWidth = windowWidth / nBands;
+        
+        for (let i = 0; i <= nBands / 2; i++) {
+            let amp = spectrum[i];
+            this.smoothedBands[i] = lerp(this.smoothedBands[i], amp, 0.5);
+            
+            let x = i * bandWidth;
+            let bandHeight = ((this.smoothedBands[i] / 255) * windowHeight* 0.004)**5;
+            
+            line(x, windowHeight/2 - bandHeight, x, windowHeight/2 + bandHeight);
+            line(windowWidth - x, windowHeight/2 - bandHeight, windowWidth - x, windowHeight/2 + bandHeight);
+        }
+    }
+
+    drawCircle(amp) {
+        fill(0, 80);
+        stroke(255);
+        strokeWeight(windowWidth * 0.00208);
+        let diameter = map(amp, 0, 0.3, windowWidth * 0.104, windowWidth * 0.167);
+        
+        ellipse(windowWidth/2, windowHeight/2, diameter, diameter);
     }
 }
-
-/*
-import processing.sound.*;
-
-SoundFile player;
-AudioIn mic;
-Amplitude analyzer;
-FFT fft;
-
-float[] smoothedBands;
-
-boolean useMic = false;
-static int WIDTH, HEIGHT, X, Y;
-
-void setup() {  
-  mic = new AudioIn(this, 0);
-  player = new SoundFile(this, "Whiplash.mp3");
-  
-  fft = new FFT(this, 1024);
-  analyzer = new Amplitude(this);
-  
-  smoothedBands = new float[fft.spectrum.length];
-  
-  if (useMic) {
-    mic.start();
-    fft.input(mic);
-    analyzer.input(mic);
-  } else {
-    player.play();
-    fft.input(player);
-    analyzer.input(player);
-  }
-}
-
-void draw() {
-  float amp = analyzer.analyze();
-  fft.analyze();
-
-  drawAudioWave(fft);
-  
-  drawCircle(amp);
-}
-
-void drawAudioWave(FFT fft) {
-  stroke(255);
-  strokeWeight(WIDTH * 0.00208);
-  
-  int nBands = fft.spectrum.length / 5;
-  float bandWidth = (float) WIDTH / nBands;
-  
-  for (int i = 0; i <= nBands / 2; i++) {
-    float amp = fft.spectrum[i];
-    smoothedBands[i] = lerp(smoothedBands[i], amp, 0.5);
-    
-    float x = i * bandWidth;
-    float bandHeight = smoothedBands[i] * WIDTH * 0.521;
-
-    line(X + x, Y + HEIGHT/2 - bandHeight, X + x, Y + HEIGHT/2 + bandHeight);
-    line(X + WIDTH - x, Y + HEIGHT/2 - bandHeight, X + WIDTH - x, Y + HEIGHT/2 + bandHeight);
-  }
-}*/
