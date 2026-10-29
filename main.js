@@ -1,9 +1,9 @@
 let scenes = [];
-let cur = 0;
+let cur = 2;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample()];
+    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample(), new Cursive(), new Camera()];
     for (let scene of scenes) {
         scene.setup();
     }
@@ -15,8 +15,9 @@ function draw() {
 }
 
 function keyPressed() {
-    if (key == '1') cur = 0;
-    else if (key == '2') cur = 1;
-    else if (key == '3') cur = 2;
+    if (key > '0' & key < '9') {
+        cur = key-'0'-1;
+        scenes[cur].setup();
+    }
     scenes[cur].keyPressed();
 }
