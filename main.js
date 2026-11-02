@@ -1,5 +1,5 @@
 let scenes = [];
-let cur = 2;
+let cur = 0;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
