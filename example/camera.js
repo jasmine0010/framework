@@ -16,7 +16,7 @@ class Camera extends Scene {
             [1, 2, 1]
         ];
 
-        colorMode(HSL);
+        colorMode(HSL, 360, 100, 100, 1);
     }
 
     setup() {
@@ -38,7 +38,9 @@ class Camera extends Scene {
     }
 
     display() {
-        background(0);
+        blendMode(BLEND);
+        fill(0, 0, 0, 0.1);
+        rect(0, 0, width, height);
 
         if (!this.edges) return;
 
@@ -81,6 +83,7 @@ class Camera extends Scene {
         }
 
         this.edges.updatePixels();
+        blendMode(LIGHTEST);
         image(this.edges, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
     }
 }
