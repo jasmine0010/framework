@@ -15,6 +15,11 @@ class Camera extends Scene {
             [0, 0, 0],
             [1, 2, 1]
         ];
+        
+        this.frozen = [];
+        this.trail = [];
+        
+        this.trailLen = 10;
 
         colorMode(HSL, 360, 100, 100, 1);
     }
@@ -39,8 +44,7 @@ class Camera extends Scene {
 
     display() {
         blendMode(BLEND);
-        fill(0, 0, 0, 0.1);
-        rect(0, 0, width, height);
+        background(0);
 
         if (!this.edges) return;
 
@@ -58,14 +62,14 @@ class Camera extends Scene {
                     for (let dy = -1; dy <= 1; dy++) {
                         const p = ((y + dy) * this.w + x + dx) * 4;
                         
-                        rx += og[p] * this.kx[dx + 1][dy + 1];
-                        ry += og[p] * this.ky[dx + 1][dy + 1];
+                        rx += og[p] * this.kx[dy + 1][dx + 1];
+                        ry += og[p] * this.ky[dy + 1][dx + 1];
 
-                        gx += og[p + 1] * this.kx[dx + 1][dy + 1];
-                        gy += og[p + 1] * this.ky[dx + 1][dy + 1];
+                        gx += og[p + 1] * this.kx[dy + 1][dx + 1];
+                        gy += og[p + 1] * this.ky[dy + 1][dx + 1];
 
-                        bx += og[p + 2] * this.kx[dx + 1][dy + 1];
-                        by += og[p + 2] * this.ky[dx + 1][dy + 1];
+                        bx += og[p + 2] * this.kx[dy + 1][dx + 1];
+                        by += og[p + 2] * this.ky[dy + 1][dx + 1];
                     }
                 }
 
@@ -84,6 +88,31 @@ class Camera extends Scene {
 
         this.edges.updatePixels();
         blendMode(LIGHTEST);
-        image(this.edges, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
+
+        if (this.trail.length > this.trailLen) this.trail.shift();
+        this.trail.push(this.edges.get());
+
+        const ox = (windowWidth - this.displayWidth) / 2;
+        const oy = (windowHeight - this.displayHeight) / 2;
+
+        this.trail.forEach((t, idx) => {
+            tint(255, map(idx, 0, this.trailLen - 1, 0, 255));
+            image(t, ox, oy, this.displayWidth, this.displayHeight);
+        });
+        noTint();
+
+        for (const f of this.frozen) {
+            image(f, ox, oy, this.displayWidth, this.displayHeight);
+        }
+
+        image(this.edges, ox, oy, this.displayWidth, this.displayHeight);
+    }
+    
+    keyPressed() {
+        if (key == ' ') {
+            this.frozen.push(this.edges.get());
+        } else if (key == 'r') {
+            this.frozen = [];
+        }
     }
 }
