@@ -17,9 +17,6 @@ class Camera extends Scene {
         ];
         
         this.frozen = [];
-        this.trail = [];
-        
-        this.trailLen = 10;
 
         colorMode(HSL, 360, 100, 100, 1);
     }
@@ -44,7 +41,8 @@ class Camera extends Scene {
 
     display() {
         blendMode(BLEND);
-        background(0);
+        fill(0, 0, 0, 0.1);
+        rect(0, 0, width, height);
 
         if (!this.edges) return;
 
@@ -89,23 +87,11 @@ class Camera extends Scene {
         this.edges.updatePixels();
         blendMode(LIGHTEST);
 
-        if (this.trail.length > this.trailLen) this.trail.shift();
-        this.trail.push(this.edges.get());
-
-        const ox = (windowWidth - this.displayWidth) / 2;
-        const oy = (windowHeight - this.displayHeight) / 2;
-
-        this.trail.forEach((t, idx) => {
-            tint(255, map(idx, 0, this.trailLen - 1, 0, 255));
-            image(t, ox, oy, this.displayWidth, this.displayHeight);
-        });
-        noTint();
-
         for (const f of this.frozen) {
-            image(f, ox, oy, this.displayWidth, this.displayHeight);
+            image(f, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
         }
 
-        image(this.edges, ox, oy, this.displayWidth, this.displayHeight);
+        image(this.edges, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
     }
     
     keyPressed() {
