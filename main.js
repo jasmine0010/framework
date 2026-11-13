@@ -3,7 +3,7 @@ let cur = 0;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample(), new Cursive(), new Camera()];
+    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample(), new Cursive(), new Camera(), new DollyParton()];
     for (let scene of scenes) {
         scene.setup();
     }
