@@ -7,4 +7,5 @@ class Scene {
     update() {}
     display() {}
     keyPressed() {}
+    mouseClicked() {}
 }

@@ -3,7 +3,7 @@ let cur = 0;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample(), new Cursive(), new Camera(), new DollyParton(), new CherryBlossoms()];
+    scenes = [new BlackScreen(), new WhiteScreen(), new AudioExample(), new Cursive(), new Camera(), new Circles(), new DollyParton(), new CherryBlossoms()];
     for (let scene of scenes) {
         scene.setup();
     }
@@ -20,4 +20,8 @@ function keyPressed() {
         scenes[cur].setup();
     }
     scenes[cur].keyPressed();
+}
+
+function mouseClicked() {
+    scenes[cur].mouseClicked();
 }
