@@ -18,11 +18,19 @@ class Camera extends Scene {
         
         this.frozen = [];
 
+        this.particles = [];
+        this.numParticles = 100;
+
         colorMode(HSL, 360, 100, 100, 1);
     }
 
     setup() {
         pixelDensity(1);
+
+        if (this.camera) return;
+
+        this.W = windowWidth;
+        this.H = windowHeight;
 
         this.camera = createCapture(VIDEO, { flipped: true }, () => {
             this.w = this.camera.width;
@@ -31,7 +39,9 @@ class Camera extends Scene {
             this.edges = createImage(this.w, this.h);
             this.edges.loadPixels();
 
-            this.scale = Math.min(windowWidth / this.w, windowHeight / this.h);
+            this.prev = createImage(this.w, this.h);
+
+            this.scale = Math.min(this.W / this.w, this.H / this.h);
             this.displayWidth = this.w * this.scale;
             this.displayHeight = this.h * this.scale;
         });
@@ -81,17 +91,36 @@ class Camera extends Scene {
                 result[p + 1] = g - shared;
                 result[p + 2] = b - shared;
                 result[p + 3] = 255;
+
+                const mag = r + g + b;
+                const idx = y * this.w + x
+                if (mag - this.prev[idx] & Math.random() < 0.1) {
+                    this.particles.push({x:x, y:y, mag:mag});
+                    if (this.particles.length > this.numParticles) this.particles.shift();
+                }
+                this.prev[idx] = mag;
             }
         }
+        console.log(this.particles.length);
 
         this.edges.updatePixels();
         blendMode(LIGHTEST);
 
         for (const f of this.frozen) {
-            image(f, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
+            image(f, (this.W - this.displayWidth) / 2, (this.H - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
         }
 
-        image(this.edges, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
+        image(this.edges, (this.W - this.displayWidth) / 2, (this.H - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
+        
+        this.drawParticles();
+    }
+
+    drawParticles() {
+        this.particles.forEach((p, idx) => {
+            fill(255);
+            rect(p.x, p.y, 50, 50);
+            noFill();
+        });
     }
     
     keyPressed() {
