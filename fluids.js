@@ -16,7 +16,7 @@ class Fluids extends Scene {
     display() {
         blendMode(BLEND);
         background(0);
-        image(this.camera, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight)
+        image(this.camera, (windowWidth - this.displayWidth) / 2, (windowHeight - this.displayHeight) / 2, this.displayWidth, this.displayHeight);
     }
 
     advect() {

@@ -17,7 +17,7 @@ function draw() {
 }
 
 function keyPressed() {
-    if (key >= '1' & key <= '6') {
+    if (key >= '1' & key <= '9') {
         cur = key-'0'-1;
         scenes[cur].setup();
     }
