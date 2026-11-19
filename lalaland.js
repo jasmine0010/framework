@@ -5,7 +5,7 @@ let lalafft;
 
 let lalauseMic = true;
 
-let background;
+let land;
 let foreground;
 
 class LalaLand extends Scene {
@@ -15,11 +15,11 @@ class LalaLand extends Scene {
     }
 
     setup() {
-        this.background = loadImage("backgroundLaLaLand.png");
+        this.land = loadImage("backgroundLaLaLand.png");
         this.foreground = loadImage("foregroundLaLaLand.png");
 
         createCanvas(windowWidth, windowHeight);
-        
+
         this.lalafft = new p5.FFT(0.8, 1024);
         this.lalaanalyzer = new p5.Amplitude();
         
@@ -34,7 +34,7 @@ class LalaLand extends Scene {
 
     display() {
         background(255);
-        image(this.background, 0, 0);
+        image(this.land, 0, 0);
         image(this.foreground, 0, 0);
     }
 }
