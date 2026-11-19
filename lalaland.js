@@ -1,27 +1,40 @@
+let lalaplayer;
+let lalamic;
+let lalaanalyzer;
+let lalafft;
+
+let lalauseMic = true;
+
+let background;
+let foreground;
+
 class LalaLand extends Scene {
+    
     constructor() {
         super('LalaLand');
     }
 
     setup() {
+        this.background = loadImage("backgroundLaLaLand.png");
+        this.foreground = loadImage("foregroundLaLaLand.png");
+
         createCanvas(windowWidth, windowHeight);
-        this.fft = new p5.FFT(0.8, 1024);
-        this.analyzer = new p5.Amplitude();
         
-        if (useMic) {
-            this.mic = new p5.AudioIn();
-            this.mic.start(() => {
-                this.fft.setInput(this.mic);
-                this.analyzer.setInput(this.mic);
+        this.lalafft = new p5.FFT(0.8, 1024);
+        this.lalaanalyzer = new p5.Amplitude();
+        
+        if (lalauseMic) {
+            this.lalamic = new p5.AudioIn();
+            this.lalamic.start(() => {
+                this.lalafft.setInput(this.lalamic);
+                this.lalaanalyzer.setInput(this.lalamic);
             });
         }
     }
 
     display() {
-        background(0);
-        fill(255);
-        textSize(32);
-        textAlign(CENTER, CENTER);
-        text('Welcome to LalaLand!', width / 2, height / 2);
+        background(255);
+        image(this.background, 0, 0);
+        image(this.foreground, 0, 0);
     }
 }

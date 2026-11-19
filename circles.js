@@ -16,7 +16,7 @@ class Circles extends Scene{
         super('Circles');
     }
 
-    setup() {
+    setup() {6
         this.lastBoomTime = millis();
         createCanvas(windowWidth, windowHeight);
 
@@ -53,7 +53,7 @@ class Circles extends Scene{
             this.drawBooms(amp);
             this.lastBoomTime = millis();
         }
-        this.drawBar(amp);
+        // this.drawBar(amp);
         
         for(let boom of booms){
             boom.display();
@@ -70,12 +70,12 @@ class Circles extends Scene{
         }
     }
 
-    drawBar(amp){
-        let barHeight = map(amp, 0, 0.1, 0, height);
-        fill(255);
-        noStroke();
-        rect(width/2 - 50, height - barHeight, 100, barHeight);
-    }
+    // drawCircleBar(amp){
+    //     let barHeight = map(amp, 0, 0.1, 0, height);
+    //     fill(255);
+    //     noStroke();
+    //     rect(width/2 - 50, height - barHeight, 100, barHeight);
+    // }
 }
 
 class Booms{
@@ -88,15 +88,15 @@ class Booms{
 
     display(){
 
-        // drawingContext.save();
-        // drawingContext.filter = 'blur(6px)';
+        drawingContext.save();
+        drawingContext.filter = 'blur(6px)';
         noFill();
         strokeWeight(10);
         stroke(223, 193, 247, this.fade);
 
         ellipse(this.position.x, this.position.y, this.radius);
 
-        // drawingContext.restore();
+        drawingContext.restore();
         this.radius = lerp(this.radius, this.targetRadius, 0.1);
 
         if(this.fade > 0){
