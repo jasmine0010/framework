@@ -8,7 +8,7 @@ class CherryBlossoms extends Scene {
   }
 
   display() {
-	colorMode(RGB)
+	  colorMode(RGB)
     angleMode(DEGREES)
     randomSeed(1)   // same random tree every frame, so it doesn't flicker
     background(100)
