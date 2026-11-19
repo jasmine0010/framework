@@ -17,11 +17,17 @@ function draw() {
 }
 
 function keyPressed() {
-    if (key >= '1' & key <= '9') {
+    if (key >= '1' & key <= '8') {
         cur = key-'0'-1;
         scenes[cur].setup();
     }
-    scenes[cur].keyPressed();
+    else if (key == 'f') {
+        let fs = fullscreen();
+        fullscreen(!fs);
+    }
+    else {
+        scenes[cur].keyPressed();
+    }
 }
 
 function mouseClicked() {
