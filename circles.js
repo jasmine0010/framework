@@ -1,34 +1,41 @@
 let booms = [];
 let particles = [];
-let circleCapture;
-let threshold = 50;
-let scaler = 10;
-let prev_frame;
-let hasPreviousFrame = false;
-let lastBoomTime = 0;
-const boomCooldown = 500; // milliseconds
-const minMotionPixels = 8; // ignore small amounts of noise
+
+let circleplayer;
+let circlemic;
+let circleanalyzer;
+let circlefft;
+let lastBoomTime;
+
+let circleuseMic = true;
+
+
 
 class Circles extends Scene{
     constructor(){
         super('Circles');
     }
 
-    setup() {
+    setup() {6
+        this.lastBoomTime = millis();
         createCanvas(windowWidth, windowHeight);
-        pixelDensity(1);
-        circleCapture = createCapture(VIDEO);
-        circleCapture.size(
-            Math.ceil(windowWidth / scaler),
-            Math.ceil(windowHeight / scaler)
-        );
-        circleCapture.hide();
-        prev_frame = createImage(circleCapture.width, circleCapture.height);
+
+        this.circlefft = new p5.FFT(0.8, 1024);
+        this.circleanalyzer = new p5.Amplitude();
         
-        // logicalCamera = createCapture(VIDEO, { flipped: true }, () => {
-        //     this.w = logicalCamera.width;
-        //     this.h = logicalCamera.height;
-        // });
+        if (circleuseMic) {
+            this.circlemic = new p5.AudioIn();
+            this.circlemic.start(() => {
+                this.circlefft.setInput(this.circlemic);
+                this.circleanalyzer.setInput(this.circlemic);
+            });
+        } else {
+            this.player = new p5.SoundFile("data/Whiplash.mp3", () => {
+                this.player.play();
+                this.fft.setInput(this.player);
+                this.analyzer.setInput(this.player);
+            });
+        }
     }
 
     mouseClicked(){
@@ -36,69 +43,17 @@ class Circles extends Scene{
     }
 
     display(){
-        background(0);6
-        image(circleCapture, 0, 0, width, height);
+        background(0);
+        // image(circleCapture, 0, 0, width, height);
         colorMode(RGB, 255);
 
-        if (!circleCapture.elt || circleCapture.elt.readyState < 2) return;
+        const amp = this.circleanalyzer.getLevel();
 
-        circleCapture.loadPixels();
-        prev_frame.loadPixels();
-
-        if (!hasPreviousFrame) {
-            prev_frame.copy(
-                circleCapture, 0, 0, circleCapture.width, circleCapture.height,
-                0, 0, circleCapture.width, circleCapture.height
-            );
-            hasPreviousFrame = true;
-            return;
+       if (millis() - this.lastBoomTime >= 500) {
+            this.drawBooms(amp);
+            this.lastBoomTime = millis();
         }
-
-        let motionX = 0;
-        let motionY = 0;
-        let motionCount = 0;
-        
-        for(let y = 0; y < circleCapture.height; y++){
-            for(let x = 0; x < circleCapture.width; x++){
-                let index = (x + y * circleCapture.width) * 4;
-                let pr = prev_frame.pixels[index];
-                let pg = prev_frame.pixels[index + 1];
-                let pb = prev_frame.pixels[index + 2];
-                let pbright = (pr + pg + pb) / 3;
-
-                let r = circleCapture.pixels[index];
-                let g = circleCapture.pixels[index + 1];
-                let b = circleCapture.pixels[index + 2];
-                let bright = (r + g + b) / 3;
-
-                let diff = dist(r,g,b, pr,pg,pb);
-
-                if(diff > threshold){
-                    // fill(bright);
-                    motionX += x;
-                    motionY += y;
-                    motionCount++;
-                } 
-            }
-        }
-
-        if (
-            motionCount >= minMotionPixels &&
-            millis() - lastBoomTime >= boomCooldown
-        ) {
-            const avgX = motionX / motionCount;
-            const avgY = motionY / motionCount;
-
-            booms.push(new Booms(
-                createVector(
-                    map(avgX, 0, circleCapture.width, 0, width),
-                    map(avgY, 0, circleCapture.height, 0, height)
-                ),
-                random(80, 200)
-            ));
-
-            lastBoomTime = millis();
-        }
+        // this.drawBar(amp);
         
         for(let boom of booms){
             boom.display();
@@ -107,6 +62,20 @@ class Circles extends Scene{
             }
         }
     }
+
+    drawBooms(amp){
+        let amount = map(amp, 0, 0.1, 0, 10);
+        for(let i = 0; i < amount; i++){
+            booms.push(new Booms(createVector(random(width), random(height)), random(80,200)));
+        }
+    }
+
+    // drawCircleBar(amp){
+    //     let barHeight = map(amp, 0, 0.1, 0, height);
+    //     fill(255);
+    //     noStroke();
+    //     rect(width/2 - 50, height - barHeight, 100, barHeight);
+    // }
 }
 
 class Booms{
@@ -114,7 +83,7 @@ class Booms{
         this.position = position;
         this.radius = radius;
         this.fade = 255;
-        this.targetRadius = radius*(random(1, 2));
+        this.targetRadius = radius*(random(2, 3));
     }
 
     display(){

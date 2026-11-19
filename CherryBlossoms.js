@@ -11,7 +11,7 @@ class CherryBlossoms extends Scene {
 	  colorMode(RGB)
     angleMode(DEGREES)
     randomSeed(1)   // same random tree every frame, so it doesn't flicker
-    background(100)
+    background(0)
 
     push()
     translate(width / 2, height / 2 + 200)
