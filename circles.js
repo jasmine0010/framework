@@ -88,15 +88,17 @@ class Booms{
 
     display(){
 
+        stroke(223, 193, 247, this.fade);
+
         drawingContext.save();
         drawingContext.filter = 'blur(6px)';
         noFill();
         strokeWeight(10);
-        stroke(223, 193, 247, this.fade);
 
         ellipse(this.position.x, this.position.y, this.radius);
 
         drawingContext.restore();
+
         this.radius = lerp(this.radius, this.targetRadius, 0.1);
 
         if(this.fade > 0){
