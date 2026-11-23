@@ -6,7 +6,7 @@ class ForestWater extends Scene {
 
  this.points = [];
     this.spacing = 12;
-    this.radius = 100;
+    this.radius = 200;
     this.pushAmount = 0.3;
     this.built = false;
 
@@ -32,10 +32,11 @@ build() {
   }
 
   display() {
+    noCursor();
     if (!this.loaded) return;
     if (!this.built) this.build();
 
-    background('#2f4a6b');
+    background('#0f1a26');
 
     let dx = mouseX - pmouseX;
     let dy = mouseY - pmouseY;
