@@ -1,6 +1,8 @@
 class Jellyfish extends Scene {
   constructor() {
-    super('Jellyfish')
+    super('Jellyfish');
+    this.showing = false;
+    this.spaceWasDown = false; 
   }
 
   setup() {
@@ -31,8 +33,22 @@ windowResized() {
 }
 
 display() {
+
+    let spaceDown = keyIsDown(32);
+    if (spaceDown && !this.spaceWasDown) {
+      this.showing = !this.showing;
+      if (this.showing) {
+        this.video.loop();
+      } else {
+        this.video.pause();
+      }
+    }
+    this.spaceWasDown = spaceDown;
+
     background(0);
-    image(this.video, 0, 0, width, height);
+    if (this.showing) {
+      image(this.video, 0, 0, width, height);
+    }
   } 
 
 }
